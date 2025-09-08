@@ -6,11 +6,23 @@
 #include <filesystem>
 #include <stack>
 #include <vector>
+#include <future>
+#include <mutex>
 #include "MD5.h"
 #include "HashDataBase.h"
 #include "Logger.h"
+#include "ThreadPool.h"
+#include "ThreadPool.cpp"
 
 namespace fs = std::filesystem;
+
+enum class CheckStatus {
+
+    ERR,
+    MALICIOUS,
+    OK
+
+};
 
 class FileScanner {
 public:
@@ -23,11 +35,13 @@ public:
  
 private:
 
-    void check_file(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger);
+    CheckStatus check_file(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger);
     std::vector<std::wstring> getFilesRecursive(const std::string& rootPath);
 
     std::string baseFile;
     std::string logFile;
+
+    std::mutex mutex;
 
     size_t totalFiles = 0;
     size_t maliciousFiles = 0;

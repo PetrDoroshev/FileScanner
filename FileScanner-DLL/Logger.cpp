@@ -1,5 +1,11 @@
 #include "Logger.h"
 
+std::string wstring_to_utf8 (const std::wstring& str) {
+
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+    return myconv.to_bytes(str);
+}
+
 Logger::Logger() {}
 
 Logger::~Logger() {
@@ -11,13 +17,12 @@ Logger::~Logger() {
 
 void Logger::openLogFile(const std::string& logFilePath) {
 
-    out = std::wofstream(logFilePath, std::ios::out | std::ios::app);
+    out = std::ofstream(logFilePath, std::ios::out | std::ios::app);
 
     if (!out.is_open()) {
 
         throw std::runtime_error("Cannot open txt file: " + logFilePath);
     }
-
 }
 
 
@@ -32,10 +37,10 @@ void Logger::log(const std::wstring &filePath, const std::string &hash, const st
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
 
-    out  << std::put_time(std::localtime(&t), L"%Y-%m-%d %H:%M:%S") 
-         << " File: " << filePath
-         << " Hash: " << std::wstring(hash.begin(), hash.end())
-         << " Verdict: " << std::wstring(verdict.begin(), verdict.end())
+    out  << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S") 
+         << " File: " << wstring_to_utf8(filePath)
+         << " Hash: " << hash
+         << " Verdict: " << verdict
          << std::endl;
 }
 

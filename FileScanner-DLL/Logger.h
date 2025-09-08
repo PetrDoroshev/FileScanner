@@ -5,6 +5,7 @@
 #include <mutex>
 #include <chrono>
 #include <iomanip>
+#include <codecvt>
 
 class Logger {
 
@@ -17,7 +18,7 @@ public:
     void openLogFile(const std::string& logFilePath);
 
 private:
-    std::wofstream out;      
+    std::ofstream out;      
     std::mutex mutex;       
 
 };

@@ -44,6 +44,8 @@ std::vector<std::wstring> FileScanner::getFilesRecursive(const std::string& root
         }    
     }
 
+    totalFiles = files.size();
+
     return files;
 }
 
@@ -51,6 +53,9 @@ void FileScanner::scan(const std::string& rootPath) {
 
     HashDataBase hash_base;
     Logger logger;
+    ThreadPool thread_pool;
+
+    std::vector<std::future<CheckStatus>> check_tasks;
 
     try {
 
@@ -65,35 +70,60 @@ void FileScanner::scan(const std::string& rootPath) {
     auto files = getFilesRecursive(rootPath);
 
     for (auto& file: files) {
+           
+        auto future = thread_pool.add_task([this, file, &hash_base, &logger] {
+            
+            return check_file(file, hash_base, logger);
+        });
 
-        check_file(file, hash_base, logger);
-
+        check_tasks.emplace_back(std::move(future)); 
     }
+
+    for (auto& result: check_tasks) {
+        
+        switch (result.get()) {
+
+            case CheckStatus::ERR:
+                errorFiles++;
+                break;
+
+            case CheckStatus::MALICIOUS:
+                maliciousFiles++;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    std::wcout << errorFiles << " ," << maliciousFiles << std::endl;
 
 }
 
-void FileScanner::check_file(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger) {
+CheckStatus FileScanner::check_file(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger) {
 
     std::string hash;
 
     try {
+
         hash = MD5(filePath);
     }
     catch (std::runtime_error& ex) {
+
         std::cerr << ex.what() << std::endl;
+        return CheckStatus::ERR;
     }
     
     std::string verdict = hashBase.getVerdict(hash);
 
-    std::wcout << std::wstring(verdict.begin(), verdict.end()) << " - " 
-                << std::wstring(hash.begin(), hash.end()) << " - " 
-                << filePath << " " << std::endl;
-
     if (!verdict.empty()) {
-        logger.log(filePath, hash, verdict);
-    }
-}
 
+        logger.log(filePath, hash, verdict);
+        return CheckStatus::MALICIOUS;
+    }
+
+    return CheckStatus::OK;
+}
 
 size_t FileScanner::getTotalFiles() const {
     return totalFiles;

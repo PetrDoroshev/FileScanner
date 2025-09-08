@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 std::string MD5(const std::wstring& filename) {
-
+    
     HCRYPTPROV hProv = 0;
     HCRYPTHASH hHash = 0;
     HANDLE hFile = CreateFileW(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
