@@ -11,7 +11,7 @@ Logger::~Logger() {
 
 void Logger::openLogFile(const std::string& logFilePath) {
 
-    out = std::ofstream(logFilePath, std::ios::out | std::ios::app);
+    out = std::wofstream(logFilePath, std::ios::out | std::ios::app);
 
     if (!out.is_open()) {
 
@@ -21,7 +21,7 @@ void Logger::openLogFile(const std::string& logFilePath) {
 }
 
 
-void Logger::log(const std::string &filePath, const std::string &hash, const std::string &verdict) {
+void Logger::log(const std::wstring &filePath, const std::string &hash, const std::string &verdict) {
 
     if (!out.is_open()) {
         return;
@@ -32,10 +32,10 @@ void Logger::log(const std::string &filePath, const std::string &hash, const std
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
 
-    out  << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S") 
+    out  << std::put_time(std::localtime(&t), L"%Y-%m-%d %H:%M:%S") 
          << " File: " << filePath
-         << " Hash: " << hash
-         << " Verdict: " << verdict
+         << " Hash: " << std::wstring(hash.begin(), hash.end())
+         << " Verdict: " << std::wstring(verdict.begin(), verdict.end())
          << std::endl;
 }
 

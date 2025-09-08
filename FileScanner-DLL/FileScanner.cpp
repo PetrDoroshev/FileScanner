@@ -6,9 +6,9 @@ FileScanner::FileScanner(const std::string& baseFile, const std::string& logFile
     this->logFile = logFile;
 }
 
-std::vector<std::string> FileScanner::getFilesRecursive(const std::string& rootPath) {
+std::vector<std::wstring> FileScanner::getFilesRecursive(const std::string& rootPath) {
 
-    std::vector<std::string> files;
+    std::vector<std::wstring> files;
 
     if (!fs::exists(rootPath) || !fs::is_directory(rootPath)) {
         
@@ -39,7 +39,7 @@ std::vector<std::string> FileScanner::getFilesRecursive(const std::string& rootP
                 directory_stack.push(dir_entry.path());
             }
             else {
-                files.push_back(dir_entry.path().generic_string());
+                files.push_back(dir_entry.path().generic_wstring());
             }
         }    
     }
@@ -58,7 +58,6 @@ void FileScanner::scan(const std::string& rootPath) {
         logger.openLogFile(logFile);
     }
     catch(std::runtime_error& ex) {
-        
         std::cerr << ex.what() << std::endl;
         return;
     }
@@ -73,7 +72,7 @@ void FileScanner::scan(const std::string& rootPath) {
 
 }
 
-void FileScanner::check_file(const std::string& filePath, HashDataBase& hashBase, Logger& logger) {
+void FileScanner::check_file(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger) {
 
     std::string hash;
 
@@ -81,12 +80,14 @@ void FileScanner::check_file(const std::string& filePath, HashDataBase& hashBase
         hash = MD5(filePath);
     }
     catch (std::runtime_error& ex) {
-        
+        std::cerr << ex.what() << std::endl;
     }
     
     std::string verdict = hashBase.getVerdict(hash);
 
-    std::cout << filePath << " " << hash << " " << verdict << std::endl;
+    std::wcout << std::wstring(verdict.begin(), verdict.end()) << " - " 
+                << std::wstring(hash.begin(), hash.end()) << " - " 
+                << filePath << " " << std::endl;
 
     if (!verdict.empty()) {
         logger.log(filePath, hash, verdict);

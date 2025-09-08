@@ -6,13 +6,14 @@
 
 
 TEST(LoggerTest, LogMaliciousFile) {
-    const std::string logFile = "D:\\\\Ci++\\FileScanner\\log_file.txt";
+    const std::string logFile = "./log_file.txt";
 
     // Удаляем файл, если он остался от предыдущего запуска
     std::remove(logFile.c_str());
 
-    Logger logger(logFile);
-    logger.log("C:/malware/file.exe", "deadbeef12345678", "Exploit");
+    Logger logger;
+    logger.openLogFile(logFile);
+    logger.log(L"C:/malware/file.exe", "deadbeef12345678", "Exploit");
 
     // Проверяем, что файл создан
     std::ifstream in(logFile);

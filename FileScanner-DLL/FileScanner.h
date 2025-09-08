@@ -23,11 +23,12 @@ public:
  
 private:
 
-    void check_file(const std::string& filePath, HashDataBase& hashBase, Logger& logger);
-    std::vector<std::string> getFilesRecursive(const std::string& rootPath);
+    void check_file(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger);
+    std::vector<std::wstring> getFilesRecursive(const std::string& rootPath);
 
     std::string baseFile;
     std::string logFile;
+
     size_t totalFiles = 0;
     size_t maliciousFiles = 0;
     size_t errorFiles = 0;

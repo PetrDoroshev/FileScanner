@@ -13,11 +13,11 @@ public:
     explicit Logger();
     ~Logger();
 
-    void log(const std::string& filePath, const std::string& hash, const std::string& verdict);
+    void log(const std::wstring& filePath, const std::string& hash, const std::string& verdict);
     void openLogFile(const std::string& logFilePath);
 
 private:
-    std::ofstream out;      
+    std::wofstream out;      
     std::mutex mutex;       
 
 };

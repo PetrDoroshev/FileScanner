@@ -2,11 +2,16 @@
 #include <cstring>
 #include <chrono>
 #include "FileScanner.h"
+#include <fcntl.h>
+#include <io.h>
+
 #define MAX_ARGS 7
 
 using namespace std::chrono;
 
 int main(int argc, char* argv[]) {
+
+	_setmode(_fileno(stdout), _O_U16TEXT);
 
 	if (argc < MAX_ARGS) {
 
@@ -41,7 +46,7 @@ int main(int argc, char* argv[]) {
 
 	auto time_ms = duration_cast<milliseconds>(t2 - t1);
 
-	std::cout << time_ms.count() << " ms" << std::endl;
+	std::wcout << time_ms.count() << " ms" << std::endl;
 
 	return 0;
 }
