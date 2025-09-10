@@ -12,4 +12,5 @@ add_library(FileScanner-DLL SHARED  FileScanner.cpp
 
 target_include_directories(FileScanner-DLL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+install(TARGETS FileScanner-DLL RUNTIME DESTINATION bin)
 

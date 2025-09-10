@@ -44,9 +44,15 @@ int main(int argc, char* argv[]) {
 	fs.scan(path_for_scanning);
 	auto t2 = high_resolution_clock::now();
 
-	auto time_ms = duration_cast<milliseconds>(t2 - t1);
+	auto time_s = duration_cast<seconds>(t2 - t1);
 
-	std::wcout << time_ms.count() << " ms" << std::endl;
+	std::wcout << "\n===== Scan Report =====\n";
+    std::wcout << "Total files:       " << fs.getTotalFiles() << "\n";
+    std::wcout << "Malicious files:   " << fs.getMaliciousFiles() << "\n";
+    std::wcout << "Errors:            " << fs.getErrorFiles() << "\n";
+    std::wcout << "Elapsed time:      " << std::fixed << std::setprecision(3) 
+              << time_s << "\n";
+    std::wcout << "=======================\n";
 
 	return 0;
 }

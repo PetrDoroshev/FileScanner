@@ -44,8 +44,6 @@ std::vector<std::wstring> FileScanner::getFilesRecursive(const std::string& root
         }    
     }
 
-    totalFiles = files.size();
-
     return files;
 }
 
@@ -70,10 +68,10 @@ void FileScanner::scan(const std::string& rootPath) {
     auto files = getFilesRecursive(rootPath);
 
     for (auto& file: files) {
-           
+        
         auto future = thread_pool.add_task([this, file, &hash_base, &logger] {
             
-            return check_file(file, hash_base, logger);
+            return checkFile(file, hash_base, logger);
         });
 
         check_tasks.emplace_back(std::move(future)); 
@@ -90,19 +88,23 @@ void FileScanner::scan(const std::string& rootPath) {
             case CheckStatus::MALICIOUS:
                 maliciousFiles++;
                 break;
-
+                
             default:
                 break;
         }
+
+        totalFiles++;
     }
-
-    std::wcout << errorFiles << " ," << maliciousFiles << std::endl;
-
 }
 
-CheckStatus FileScanner::check_file(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger) {
+CheckStatus FileScanner::checkFile(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger) {
 
     std::string hash;
+
+    {   
+        std::lock_guard<std::mutex> loack(mutex);    
+        std::wcout << "Processing file: " << filePath << std::endl;
+    }
 
     try {
 
@@ -110,7 +112,9 @@ CheckStatus FileScanner::check_file(const std::wstring& filePath, HashDataBase& 
     }
     catch (std::runtime_error& ex) {
 
-        std::cerr << ex.what() << std::endl;
+        std::lock_guard<std::mutex> loack(mutex);   
+        
+        std::wcerr << "An error occurred while processing the file " << filePath << ": " << ex.what() << std::endl;
         return CheckStatus::ERR;
     }
     

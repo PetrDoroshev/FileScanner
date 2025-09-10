@@ -24,6 +24,23 @@ enum class CheckStatus {
 
 };
 
+/**
+ * @class FileScanner
+ * @brief Performs recursive scanning of files in a directory to detect malicious content.
+ *
+ * The FileScanner is the main class responsible for:
+ * - Traversing directories recursively.
+ * - Comparing file hashes against a known malicious hash database (CSV).
+ * - Logging detections into a report file.
+ * - Collecting scan statistics (total files, malicious files, errors, elapsed time).
+ *
+ * Usage:
+ * @code
+ * FileScanner file_scanner("base.csv", "report.log");
+ * file_scanner.scan("C:/folder");
+ * @endcode
+ */
+
 class FileScanner {
 public:
     FileScanner(const std::string& baseFile, const std::string& logFile);
@@ -35,7 +52,7 @@ public:
  
 private:
 
-    CheckStatus check_file(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger);
+    CheckStatus checkFile(const std::wstring& filePath, HashDataBase& hashBase, Logger& logger);
     std::vector<std::wstring> getFilesRecursive(const std::string& rootPath);
 
     std::string baseFile;

@@ -6,8 +6,12 @@
 #include <fstream>
 #include <sstream>  
 
-class HashDataBase {
+/**
+ * @class HashDataBase
+ * @brief Stores and manages the database of known malicious file hashes.
+ */
 
+class HashDataBase {
 
 public:
 

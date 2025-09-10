@@ -7,6 +7,21 @@
 #include <iomanip>
 #include <codecvt>
 
+/**
+ * @class Logger
+ * @brief Thread-safe logging utility for writing scan results to a file.
+ *
+ * Logger writes messages in UTF-8 encoding to ensure compatibility
+ * with international file paths (including Cyrillic).
+ *
+ * Logged information includes:
+ * - Timestamp
+ * - File path
+ * - MD5 hash
+ * - Verdict (if malicious)
+ */
+
+
 class Logger {
 
 public:
