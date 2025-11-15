@@ -1,6 +1,6 @@
 ## FileScanner
 
-A multithreaded C++17/20 utility for recursive file system scanning, MD5 hash calculation, and malware detection using a hash database, featuring logging and unit testing with GoogleTest.
+A multithreaded C++ utility for recursive file system scanning, MD5 hash calculation, and malware detection using a hash database, featuring logging and unit testing with GoogleTest.
 
 
 Requirements:
